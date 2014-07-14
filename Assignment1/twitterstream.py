@@ -13,10 +13,14 @@ access_token = oauth.Token(key=access_token_key, secret=access_token_secret)
 client = oauth.Client(consumer, access_token)
 
 search_string ="https://api.twitter.com/1.1/search/tweets.json?q=crimea"
-search_string ='http://search.twitter.com/search.json?q=crimea'
-response, data = client.request(search_string)
-# data = urllib2.urlopen(search_string)
-tweets = json.loads(data)
-# print tweets
-for tweet in tweets["statuses"]:
-    # print tweet["text"]
+max_request = 100000
+for i in range(max_request):
+	response, data = client.request(search_string)
+	tweets = json.loads(data)
+	# print tweets
+	# print response
+	
+	min_id = min([status["id"] for status in tweets["statuses"]])
+	for status in tweets["statuses"]:
+		print status["text"]
+	search_string ="https://api.twitter.com/1.1/search/tweets.json?q=crimea&max_id=" + str(min_id-1)
